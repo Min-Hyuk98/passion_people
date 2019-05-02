@@ -7,10 +7,11 @@ from bs4 import BeautifulSoup
 #.area=001,002,004,007,003를 url에 포함시킨다 --> 서울지역만 보여줌
 #.&age=10,20,30를 ,url에 포함시킨다 --> 10~30대까지만 보여줌
 
-firstPage = 1
 #마지막 페이지 번호는 .totalPagingNum에서 가져온다
+firstPage = 1
 lastPage = 1
 
+# 로그인 세션 만들어서, 이 안에서 코드 실행
 with requests.session() as s:
     url = "https://store.musinsa.com/app/api/login/make_login"
     data = {
@@ -27,33 +28,36 @@ with requests.session() as s:
 #     print(html)
     soup = BeautifulSoup(html, 'html.parser')
 
-    #마지막 페이지 번호를 구함
+# 마지막 페이지 번호를 구함
     lastPage = soup.find('span',class_='totalPagingNum').get_text()
-    #print(lastPage) #lastPage는 str타입
+#     print(lastPage) #lastPage는 str타입
 
+# 바깥 페이지에서 모든 페이지에 하나하나 접근함(성별, 지역, 연령, 시기는 밑의 url에 포함)
     for i in range(firstPage, int(lastPage) + 1):
         r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p=', str(i))
         html = r.text
         soup = BeautifulSoup(html, 'html.parser')
-
+# 각 아이템에 접근함
         for link in soup.findAll('a', class_='creplyCnt'):
             if 'href' in link.attrs:
                 uid = link.attrs['href']
                 uid = uid[-17:-8]
 #                 print(uid)
 
+# 각 아이템의 링크에 들어감
                 new_url = "https://www.musinsa.com/index.php?m=street&" + uid
                 r = s.post(new_url, data=data)
 #                 print(r.text)
-
                 beautifulSoup = BeautifulSoup(r.text, 'html.parser')
 #                 print(beautifulSoup)
+
+# 아이템의 정보
                 raw_list = beautifulSoup.select('table > tbody > tr > td > span')
 
                 info_list = []
                 for i in raw_list:
                     info_list.append(i.get_text())
-
+# 예외 없애줌
                 if '2018 F/W 헤라 서울패션위크' in info_list:
                     info_list.pop(3)
                 elif '2018 서머 뮤직 페스티벌' in info_list:
@@ -77,12 +81,28 @@ with requests.session() as s:
                 elif '2018 서머 뮤직 페스티벌' in info_list:
                     info_list.pop(3)
 
-                print(info_list)
+#                 print(info_list)
 
                 date = info_list[1]
                 style = info_list[5]
                 views_like = info_list[6]
-                print(date)
-                print(style)
-                print(views_like)
-                print("/////////////////")
+#                 print(date)
+#                 print(style)
+#                 print(views_like)
+#                 print("/////////////////")
+
+
+
+# 이미지 링크
+                photos = []
+                raw_photos = beautifulSoup.select(' ul > li > div.itemImg > a > img')
+                for i in raw_photos:
+                    photos.append(i.get("src"))
+#                 print(photos)
+
+# 이미지 설명
+                explanations = []
+                raw_explanations = beautifulSoup.select('ul > li > div.itemImg > div > ul > li > a > span')
+                for i in raw_explanations:
+                    explanations.append(i.get_text())
+#                 print(explanations)
