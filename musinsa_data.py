@@ -2,13 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
-#gender=f ¶Ç´Â gender=m ¸¦ url¿¡ Æ÷ÇÔ½ÃÅ²´Ù --> °¢°¢ µû·Î ºĞ¼®ÇÏ·ÁÇÔ
-#sellitem = 1À» url¿¡ Æ÷ÇÔ½ÃÅ²´Ù --> ÇöÀç ÆÇ¸ÅÁßÀÎ ¿ÊÀ» ÀÔÀº »çÁø¸¸ º¸¿©ÁÜ
-#.area=001,002,004,007,003¸¦ url¿¡ Æ÷ÇÔ½ÃÅ²´Ù --> ¼­¿ïÁö¿ª¸¸ º¸¿©ÁÜ
-#.&age=10,20,30¸¦ ,url¿¡ Æ÷ÇÔ½ÃÅ²´Ù --> 10~30´ë±îÁö¸¸ º¸¿©ÁÜ
+#gender=f ë˜ëŠ” gender=m ë¥¼ urlì— í¬í•¨ì‹œí‚¨ë‹¤ --> ê°ê° ë”°ë¡œ ë¶„ì„í•˜ë ¤í•¨
+#sellitem = 1ì„ urlì— í¬í•¨ì‹œí‚¨ë‹¤ --> í˜„ì¬ íŒë§¤ì¤‘ì¸ ì˜·ì„ ì…ì€ ì‚¬ì§„ë§Œ ë³´ì—¬ì¤Œ
+#.area=001,002,004,007,003ë¥¼ urlì— í¬í•¨ì‹œí‚¨ë‹¤ --> ì„œìš¸ì§€ì—­ë§Œ ë³´ì—¬ì¤Œ
+#.&age=10,20,30ë¥¼ ,urlì— í¬í•¨ì‹œí‚¨ë‹¤ --> 10~30ëŒ€ê¹Œì§€ë§Œ ë³´ì—¬ì¤Œ
 
-firstPage = 1 
-#¸¶Áö¸· ÆäÀÌÁö ¹øÈ£´Â .totalPagingNum¿¡¼­ °¡Á®¿Â´Ù
+firstPage = 1
+#ë§ˆì§€ë§‰ í˜ì´ì§€ ë²ˆí˜¸ëŠ” .totalPagingNumì—ì„œ ê°€ì ¸ì˜¨ë‹¤
 lastPage = 1
 
 with requests.session() as s:
@@ -21,21 +21,21 @@ with requests.session() as s:
     response = s.post(url, data=data)
     response.raise_for_status
 #     print(response.text)
-    
+
     r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003')
     html = r.text
 #     print(html)
     soup = BeautifulSoup(html, 'html.parser')
-    
-    #¸¶Áö¸· ÆäÀÌÁö ¹øÈ£¸¦ ±¸ÇÔ
+
+    #ë§ˆì§€ë§‰ í˜ì´ì§€ ë²ˆí˜¸ë¥¼ êµ¬í•¨
     lastPage = soup.find('span',class_='totalPagingNum').get_text()
-    #print(lastPage) #lastPage´Â strÅ¸ÀÔ
+    #print(lastPage) #lastPageëŠ” stríƒ€ì…
 
     for i in range(firstPage, int(lastPage) + 1):
         r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p=', str(i))
         html = r.text
         soup = BeautifulSoup(html, 'html.parser')
-    
+
         for link in soup.findAll('a', class_='creplyCnt'):
             if 'href' in link.attrs:
                 uid = link.attrs['href']
@@ -45,8 +45,44 @@ with requests.session() as s:
                 new_url = "https://www.musinsa.com/index.php?m=street&" + uid
                 r = s.post(new_url, data=data)
 #                 print(r.text)
-            
+
                 beautifulSoup = BeautifulSoup(r.text, 'html.parser')
 #                 print(beautifulSoup)
-                test = beautifulSoup.find('td').get_text()
-                print(test)
+                raw_list = beautifulSoup.select('table > tbody > tr > td > span')
+
+                info_list = []
+                for i in raw_list:
+                    info_list.append(i.get_text())
+
+                if '2018 F/W í—¤ë¼ ì„œìš¸íŒ¨ì…˜ìœ„í¬' in info_list:
+                    info_list.pop(3)
+                elif '2018 ì„œë¨¸ ë®¤ì§ í˜ìŠ¤í‹°ë²Œ' in info_list:
+                    info_list.pop(3)
+                elif "2018 MUSINSA MD'S PICK" in info_list:
+                    info_list.pop(3)
+                elif '2018 F/W í•˜ìš°ìŠ¤ ì˜¤ë¸Œ ë°˜ìŠ¤' in info_list:
+                    info_list.pop(3)
+                elif '2018 ì‹ í•™ê¸° ìŠ¤íƒ€ì¼ ê°€ì´ë“œ ë¶' in info_list:
+                    info_list.pop(3)
+                elif '2018 ìŠ¤ì›¨íŠ¸ í˜ìŠ¤í‹°ë²Œ' in info_list:
+                    info_list.pop(3)
+                elif '2018 S/S ì¼ë³¸ íŠ¸ë Œë“œ ë¦¬í¬íŠ¸' in info_list:
+                    info_list.pop(3)
+                elif '2018 F/W ë²„ì‰¬ì¹´ ë„ì¿„ ë¦¬í¬íŠ¸' in info_list:
+                    info_list.pop(3)
+                elif '2018 ì•„ìš°í„° í˜ìŠ¤í‹°ë²Œ' in info_list:
+                    info_list.pop(3)
+                elif '2019 S/S í—¤ë¼ ì„œìš¸íŒ¨ì…˜ìœ„í¬' in info_list:
+                    info_list.pop(3)
+                elif '2018 ì„œë¨¸ ë®¤ì§ í˜ìŠ¤í‹°ë²Œ' in info_list:
+                    info_list.pop(3)
+
+                print(info_list)
+
+                date = info_list[1]
+                style = info_list[5]
+                views_like = info_list[6]
+                print(date)
+                print(style)
+                print(views_like)
+                print("/////////////////")
