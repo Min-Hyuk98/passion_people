@@ -95,7 +95,7 @@ with requests.session() as s:
 
 # # 이미지 링크
 #                 photos = []
-#                 raw_photos = beautifulSoup.select(' ul > li > div.itemImg > a > img')
+#                 raw_photos = beautifulSoup.select('ul > li > div.itemImg > a > img')
 #                 for i in raw_photos:
 #                     photos.append(i.get("src"))
 #                 print(photos)
@@ -109,10 +109,12 @@ with requests.session() as s:
 
 
 
+
+
 # 이미지 및 설명 이중리스트로 만듦
                 photos = [[],[],[]]
                 explanations = []
-                raw_photos = beautifulSoup.select(' ul > li > div.itemImg > a > img')
+                raw_photos = beautifulSoup.select('ul > li > div.itemImg > a > img')
                 raw_explanations = beautifulSoup.select('ul > li > div.itemImg > div > ul > li > a > span')
                 for i in raw_explanations:
                     explanations.append(i.get_text())
@@ -120,7 +122,7 @@ with requests.session() as s:
                 for i in raw_photos:
                     photos[num].append(i.get("src"))
                     for j in explanations:
-                        if "색" in j:
+                        if "색" in j or "블랙" in j or "베이지" in j or "체크" in j or "아이보리" in j or "스트라이프" in j or "브라운" in j or "레드" in j or "오렌지" in j:
                             photos[num].append(j)
                             explanations.remove(j)
                             break
@@ -128,4 +130,14 @@ with requests.session() as s:
                             photos[num].append(j)
                             explanations.remove(j)
                     num += 1
-                print(photos)
+#                 print(photos)
+
+
+                print(date)
+                print(style)
+                print(views_like)
+                for i in photos:
+                    for j in i:
+                        print(j)
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+     
