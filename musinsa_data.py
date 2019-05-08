@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from googletrans import Translator
 
 
 #gender=f 또는 gender=m 를 url에 포함시킨다 --> 각각 따로 분석하려함
@@ -13,6 +14,9 @@ lastPage = 1
 
 # 로그인 세션 만들어서, 이 안에서 코드 실행
 with requests.session() as s:
+
+    musinsa_data_list = []
+
     url = "https://store.musinsa.com/app/api/login/make_login"
     data = {
         "referer" : "https://www.musinsa.com/index.php",
@@ -51,6 +55,45 @@ with requests.session() as s:
                 beautifulSoup = BeautifulSoup(r.text, 'html.parser')
 #                 print(beautifulSoup)
 
+# 한 아이템 내에서 아우터, 상의, 하의의 사진과 정보만 골라서 분류함
+                photo1 = []
+                photo2 = []
+                photo3 = []
+                num = 1
+                for tag in beautifulSoup.select('ul > li > div.itemImg > a > img'):
+#                     print(num)
+                    if num == 1:
+                        raw_explanations = beautifulSoup.select('ul > li:nth-of-type(1) > div.itemImg > div > ul > li > a > span')
+                        if any("아우터" in s or "상의" in s or '하의' in s for s in raw_explanations):
+                            raw_photos = beautifulSoup.select('ul > li:nth-of-type(1) > div.itemImg > a > img')
+                            photo1.append(raw_photos[0].get("src"))
+                            for i in raw_explanations:
+                                photo1.append(i.get_text())
+#                         print(photo1)
+
+                    elif num == 2:
+                        raw_explanations = beautifulSoup.select('ul > li:nth-of-type(2) > div.itemImg > div > ul > li > a > span')
+                        if any("아우터" in s or "상의" in s or '하의' in s for s in raw_explanations):
+                            raw_photos = beautifulSoup.select('ul > li:nth-of-type(2) > div.itemImg > a > img')
+                            photo2.append(raw_photos[0].get("src"))
+                            for i in raw_explanations:
+                                photo2.append(i.get_text())
+#                         print(photo2)
+                    elif num == 3:
+                        raw_explanations = beautifulSoup.select('ul > li:nth-of-type(3) > div.itemImg > div > ul > li > a > span')
+                        if any("아우터" in s or "상의" in s or '하의' in s for s in raw_explanations):
+                            raw_photos = beautifulSoup.select('ul > li:nth-of-type(3) > div.itemImg > a > img')
+                            photo2.append(raw_photos[0].get("src"))
+                            for i in raw_explanations:
+                                photo3.append(i.get_text())
+#                         print(photo3)
+                    else:
+                        print("error!!!!.... the number of items is more than 3")
+                    num += 1
+# 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
+                if not photo1 and not photo2 and not photo3:
+                    break
+
 # 아이템의 정보
                 raw_list = beautifulSoup.select('table > tbody > tr > td > span')
 
@@ -86,58 +129,25 @@ with requests.session() as s:
                 date = info_list[1]
                 style = info_list[5]
                 views_like = info_list[6]
-#                 print(date)
-#                 print(style)
-#                 print(views_like)
-#                 print("/////////////////")
 
-
-
-# # 이미지 링크
-#                 photos = []
-#                 raw_photos = beautifulSoup.select('ul > li > div.itemImg > a > img')
-#                 for i in raw_photos:
-#                     photos.append(i.get("src"))
-#                 print(photos)
-
-# # 이미지 설명
-#                 explanations = []
-#                 raw_explanations = beautifulSoup.select('ul > li > div.itemImg > div > ul > li > a > span')[:1]
-#                 for i in raw_explanations:
-#                     explanations.append(i.get_text())
-#                 print(explanations)
-
-
-
-
-
-# 이미지 및 설명 이중리스트로 만듦
-                photos = [[],[],[]]
-                explanations = []
-                raw_photos = beautifulSoup.select('ul > li > div.itemImg > a > img')
-                raw_explanations = beautifulSoup.select('ul > li > div.itemImg > div > ul > li > a > span')
-                for i in raw_explanations:
-                    explanations.append(i.get_text())
-                num = 0
-                for i in raw_photos:
-                    photos[num].append(i.get("src"))
-                    for j in explanations:
-                        if "색" in j or "블랙" in j or "베이지" in j or "체크" in j or "아이보리" in j or "스트라이프" in j or "브라운" in j or "레드" in j or "오렌지" in j:
-                            photos[num].append(j)
-                            explanations.remove(j)
-                            break
-                        else:
-                            photos[num].append(j)
-                            explanations.remove(j)
-                    num += 1
-#                 print(photos)
-
-
-                print(date)
-                print(style)
-                print(views_like)
-                for i in photos:
-                    for j in i:
-                        print(j)
+# 각각 따로 모은 데이터들을 합치기
+                if photo1:
+                    photo1.append(date)
+                    photo1.append(style)
+                    photo1.append(views_like)
+                    musinsa_data_list.append(photo1)
+#                     print(photo1)
+                if photo2:
+                    photo2.append(date)
+                    photo2.append(style)
+                    photo2.append(views_like)
+                    musinsa_data_list.append(photo2)
+#                     print(photo2)
+                if photo3:
+                    photo3.append(date)
+                    photo3.append(style)
+                    photo3.append(views_like)
+                    musinsa_data_list.append(photo3)
+#                     print(photo3)
+                print(musinsa_data_list)
                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-     
