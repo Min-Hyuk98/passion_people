@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from googletrans import Translator
+from translate import Translator
+
 
 
 #gender=f 또는 gender=m 를 url에 포함시킨다 --> 각각 따로 분석하려함
@@ -93,7 +94,12 @@ with requests.session() as s:
 # 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
                 if not photo1 and not photo2 and not photo3:
                     break
-
+# 구글번역기로 영어로 번역
+# https://pypi.org/project/translate/
+# googletrans issue.......... 다른 라이브러리로 대체
+                translator= Translator(to_lang="en", from_lang = "ko")
+                translation = translator.translate("펜")
+                print(translation)
 # 아이템의 정보
                 raw_list = beautifulSoup.select('table > tbody > tr > td > span')
 
@@ -149,5 +155,5 @@ with requests.session() as s:
                     photo3.append(views_like)
                     musinsa_data_list.append(photo3)
 #                     print(photo3)
-                print(musinsa_data_list)
-                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+#                 print(musinsa_data_list)
+#                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
