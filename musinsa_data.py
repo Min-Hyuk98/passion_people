@@ -98,8 +98,43 @@ with requests.session() as s:
 # https://pypi.org/project/translate/
 # googletrans issue.......... 다른 라이브러리로 대체
                 translator= Translator(to_lang="en", from_lang = "ko")
-                translation = translator.translate("펜")
-                print(translation)
+#                 translation = translator.translate("펜")
+#                 print(translation)
+# photo1 영어로 번역
+                num = 0
+                tmp = []
+                for name in photo1:
+                    if num > 0:
+                        tmp.append(translator.translate(name))
+                    else:
+                        num = 1
+                del photo1[1:]
+                photo1.extend(tmp)
+#                 print(photo1)
+#photo2 영어로 번역
+                num = 0
+                tmp = []
+                for name in photo2:
+                    if num > 0:
+                        tmp.append(translator.translate(name))
+                    else:
+                        num = 1
+                del photo2[1:]
+                photo2.extend(tmp)
+#                 print(photo2)
+# photo3 영어로 번역
+                num = 0
+                tmp = []
+                for name in photo3:
+                    if num > 0:
+                        tmp.append(translator.translate(name))
+                    else:
+                        num = 1
+                del photo3[1:]
+                photo3.extend(tmp)
+#                 print(photo3)
+
+
 # 아이템의 정보
                 raw_list = beautifulSoup.select('table > tbody > tr > td > span')
 
@@ -155,5 +190,7 @@ with requests.session() as s:
                     photo3.append(views_like)
                     musinsa_data_list.append(photo3)
 #                     print(photo3)
-#                 print(musinsa_data_list)
-#                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+
+                print(musinsa_data_list)
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
