@@ -51,15 +51,19 @@ with requests.session() as s:
 
 # 바깥 페이지에서 모든 페이지에 하나하나 접근함(성별, 지역, 연령, 시기는 밑의 url에 포함)
     for i in range(firstPage, int(lastPage) + 1):
-        r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p=', str(i))
+        r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p='+ str(i))
         html = r.text
         soup = BeautifulSoup(html, 'html.parser')
+
 # 각 아이템에 접근함
-        for link in soup.findAll('a', class_='creplyCnt'):
-            if 'href' in link.attrs:
-                uid = link.attrs['href']
+        tmp_list = soup.findAll('a', class_='creplyCnt')
+        for item in tmp_list:
+            if 'href' in item.attrs:
+                uid = item.attrs['href']
                 uid = uid[-17:-8]
 #                 print(uid)
+
+
 
 # 각 아이템의 링크에 들어감
                 new_url = "https://www.musinsa.com/index.php?m=street&" + uid
@@ -105,7 +109,7 @@ with requests.session() as s:
                     num += 1
 # 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
                 if not photo1 and not photo2 and not photo3:
-                    break
+                    continue
 # # 구글번역기로 영어로 번역
 # # https://pypi.org/project/translate/
 # # googletrans issue.......... 다른 라이브러리로 대체
@@ -184,7 +188,6 @@ with requests.session() as s:
                 views_like = info_list[6]
 
 # 각각 따로 모은 데이터들을 합치기
-
                 if photo1:
                     photo1.append(date)
                     photo1.append(style)
@@ -207,8 +210,8 @@ with requests.session() as s:
 
 #                 print(musinsa_data_list)
 #                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        print('a')
-print(musinsa_data_list)
+#         print('a')
+# print(musinsa_data_list)
 
 
 # In[ ]:
@@ -309,7 +312,7 @@ data_copy['total_tags']=data_copy['total_tags'].apply(lambda x: cleannone(str(x)
 # In[1]:
 
 
-# 콤마(,)를 기준으로 나눠서 각 리스트의 요소들을 컬럼에 저장 
+# 콤마(,)를 기준으로 나눠서 각 리스트의 요소들을 컬럼에 저장
 data_copy['pre_tag1']=data_copy['total_tags'].apply(lambda x: x.split(',')[0])
 data_copy['pre_tag2']=data_copy['total_tags'].apply(lambda x: x.split(',')[1])
 data_copy['pre_tag3']=data_copy['total_tags'].apply(lambda x: x.split(',')[2])
@@ -516,7 +519,7 @@ final_set=data_copy[['en_pre_tag1_1','en_pre_tag1_2','en_pre_tag2','en_pre_tag3'
 final_set['example_final']=final_set.apply(lambda x: [x['en_pre_tag1_1'],x['en_pre_tag1_2'],x['en_pre_tag2'],x['en_pre_tag3'],x['en_pre_tag4'],x['en_pre_tag5_1'],x['en_pre_tag5_2'],x['en_pre_tag5_3'],x['en_pre_tag6_1'],x['en_pre_tag6_2']],axis=1)
 
 
-# ## 전처리 및 변환을 마친 word들을 수치화 시키는 과정 : Word2 vec 모델 
+# ## 전처리 및 변환을 마친 word들을 수치화 시키는 과정 : Word2 vec 모델
 
 # In[92]:
 
@@ -573,13 +576,13 @@ word_vectors_list= [word_vectors[v] for v in vocabs]
 
 # ## 학습된 모델 사용시 벡터의 평균 점수 사용
 # - 밑의 함수에 대한 요약 해석
-# 
+#
 # : 한 사진마다 태그가 없으면 벡터화할 단어가 없으므로 0 값
-# 
-# : 단어가 있다면 태그 하나당 수치화(벡터화)의 수준을 300개로 할당 
-# 
+#
+# : 단어가 있다면 태그 하나당 수치화(벡터화)의 수준을 300개로 할당
+#
 # -- ex) crop에 대한 점수(벡터)- 300개
-# - 결론: 각 단어마다 300개의 수치화된 점수로 구성된다. 
+# - 결론: 각 단어마다 300개의 수치화된 점수로 구성된다.
 
 # In[35]:
 
@@ -598,7 +601,7 @@ def get_average_word2vec(tokens_list, vector, generate_missing=False, k=300):
     return averaged
 
 def get_word2vec_embeddings(vectors, clean_comments, generate_missing=False):
-    embeddings = final_set['example_end'].apply(lambda x: get_average_word2vec(x, vectors, 
+    embeddings = final_set['example_end'].apply(lambda x: get_average_word2vec(x, vectors,
                                                                                 generate_missing=generate_missing))
     return list(embeddings)
 
@@ -616,7 +619,7 @@ training_embeddings = get_word2vec_embeddings(model, final_set, generate_missing
 
 from sklearn.decomposition import PCA
 from matplotlib import pyplot
-# 태그들을 벡터화 시킨 값을 x에 저장 
+# 태그들을 벡터화 시킨 값을 x에 저장
 # 2개의 성분으로 벡터들을 축소
 pca = PCA(n_components=2)
 X = pca.fit_transform(training_embeddings)
@@ -626,7 +629,7 @@ from sklearn import metrics
 NUM_CLUSTERS=3
 kmeans = cluster.KMeans(n_clusters=NUM_CLUSTERS)
 kmeans.fit(X)
- 
+
 labels = kmeans.labels_
 centroids = kmeans.cluster_centers_
 
@@ -660,7 +663,3 @@ final.to_csv('fianl_project_dataset.csv',index=False,mode='w')
 
 
 # In[ ]:
-
-
-
-

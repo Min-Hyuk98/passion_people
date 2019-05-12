@@ -39,15 +39,19 @@ with requests.session() as s:
 
 # 바깥 페이지에서 모든 페이지에 하나하나 접근함(성별, 지역, 연령, 시기는 밑의 url에 포함)
     for i in range(firstPage, int(lastPage) + 1):
-        r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p=', str(i))
+        r = requests.get('https://www.musinsa.com/index.php?m=street&_y=2018&gender=f&area=001,002,004,007,003&p='+ str(i))
         html = r.text
         soup = BeautifulSoup(html, 'html.parser')
+
 # 각 아이템에 접근함
-        for link in soup.findAll('a', class_='creplyCnt'):
-            if 'href' in link.attrs:
-                uid = link.attrs['href']
+        tmp_list = soup.findAll('a', class_='creplyCnt')
+        for item in tmp_list:
+            if 'href' in item.attrs:
+                uid = item.attrs['href']
                 uid = uid[-17:-8]
 #                 print(uid)
+
+
 
 # 각 아이템의 링크에 들어감
                 new_url = "https://www.musinsa.com/index.php?m=street&" + uid
@@ -93,7 +97,7 @@ with requests.session() as s:
                     num += 1
 # 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
                 if not photo1 and not photo2 and not photo3:
-                    break
+                    continue
 # # 구글번역기로 영어로 번역
 # # https://pypi.org/project/translate/
 # # googletrans issue.......... 다른 라이브러리로 대체
@@ -194,5 +198,5 @@ with requests.session() as s:
 
 #                 print(musinsa_data_list)
 #                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        print('a')
+#         print('a')
 print(musinsa_data_list)
