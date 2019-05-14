@@ -198,6 +198,7 @@ with requests.session() as s:
 #                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 #         print('a')
 
+# 예외 없애기
 for s in musinsa_data_list:
     if "//image.musinsa.com" not in s[0]:
         musinsa_data_list.remove(s)
@@ -210,5 +211,6 @@ for s in musinsa_data_list:
     for k in s[1:]:
         if "//image.musinsa.com" in k:
             musinsa_data_list.remove(s)
+
 
 print(musinsa_data_list)
