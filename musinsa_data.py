@@ -92,8 +92,6 @@ with requests.session() as s:
                             for i in raw_explanations:
                                 photo3.append(i.get_text())
 #                         print(photo3)
-                    else:
-                        print("error!!!!.... the number of items is more than 3")
                     num += 1
 # 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
                 if not photo1 and not photo2 and not photo3:
@@ -199,4 +197,13 @@ with requests.session() as s:
 #                 print(musinsa_data_list)
 #                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 #         print('a')
+
+for s in musinsa_data_list:
+    if "//image.musinsa.com" not in s[0]:
+        musinsa_data_list.remove(s)
+
+for s in musinsa_data_list:
+    if "2018-" in s[1]:
+        musinsa_data_list.remove(s)
+
 print(musinsa_data_list)

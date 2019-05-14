@@ -98,8 +98,6 @@ with requests.session() as s:
                             for i in raw_explanations:
                                 photo3.append(i.get_text())
 #                         print(photo3)
-                    else:
-                        print("error!!!!.... the number of items is more than 3")
                     num += 1
 # 아이템중 아우터, 상의, 하의중 아무것도 없는 것은  제외함
                 if not photo1 and not photo2 and not photo3:
@@ -205,8 +203,16 @@ with requests.session() as s:
 #                 print(musinsa_data_list)
 #                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 #         print('a')
-print(musinsa_data_list)
 
+for s in musinsa_data_list:
+    if "//image.musinsa.com" not in s[0]:
+        musinsa_data_list.remove(s)
+
+for s in musinsa_data_list:
+    if "2018-" in s[1]:
+        musinsa_data_list.remove(s)
+
+print(musinsa_data_list)
 
 # In[37]:
 
@@ -381,7 +387,7 @@ def cleanspace(readData):
 data_copy['total_tags']=data_copy['total_tags'].apply(lambda x: cleannone(str(x)))
 
 
-# ## 단어들의 벡터화 
+# ## 단어들의 벡터화
 
 # In[74]:
 
@@ -404,15 +410,15 @@ print("심플와 관련된 키워드 : ", model.most_similar("심플"))
 
 # ## 학습된 모델 사용시 벡터의 평균 점수 사용
 # •밑의 함수에 대한 요약 해석
-# 
+#
 # : 한 사진마다 태그가 없으면 벡터화할 단어가 없으므로 0 값
-# 
-# : 단어가 있다면 태그 하나당 수치화(벡터화)의 수준을 300개로 할당 
-# 
+#
+# : 단어가 있다면 태그 하나당 수치화(벡터화)의 수준을 300개로 할당
+#
 # -- ex) crop에 대한 점수(벡터)- 300개
-# 
-# •결론: 각 단어마다 300개의 수치화된 점수로 구성된다. 
-# 
+#
+# •결론: 각 단어마다 300개의 수치화된 점수로 구성된다.
+#
 
 # In[152]:
 
@@ -431,7 +437,7 @@ def get_average_word2vec(tokens_list, vector, generate_missing=False, k=300):
     return averaged
 
 def get_word2vec_embeddings(vectors, clean_comments, generate_missing=False):
-    embeddings = data_copy['total_tags'].apply(lambda x: get_average_word2vec(x, vectors, 
+    embeddings = data_copy['total_tags'].apply(lambda x: get_average_word2vec(x, vectors,
                                                                                 generate_missing=generate_missing))
     return list(embeddings)
 
@@ -456,7 +462,7 @@ word_vectors_list= [word_vectors[v] for v in vocabs]
 
 from sklearn.decomposition import PCA
 from matplotlib import pyplot
-# 태그들을 벡터화 시킨 값을 x에 저장 
+# 태그들을 벡터화 시킨 값을 x에 저장
 # 2개의 성분으로 벡터들을 축소
 pca = PCA(n_components=2)
 X = pca.fit_transform(training_embeddings)
@@ -466,7 +472,7 @@ from sklearn import metrics
 NUM_CLUSTERS=5
 kmeans = cluster.KMeans(n_clusters=NUM_CLUSTERS)
 kmeans.fit(X)
- 
+
 labels = kmeans.labels_
 centroids = kmeans.cluster_centers_
 
@@ -510,7 +516,3 @@ final.shape
 
 
 # In[ ]:
-
-
-
-
