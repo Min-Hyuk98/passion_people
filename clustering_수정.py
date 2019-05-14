@@ -212,6 +212,11 @@ for s in musinsa_data_list:
     if "2018-" in s[1]:
         musinsa_data_list.remove(s)
 
+for s in musinsa_data_list:
+    for k in s[1:]:
+        if "//image.musinsa.com" in k:
+            musinsa_data_list.remove(s)
+
 print(musinsa_data_list)
 
 # In[37]:
