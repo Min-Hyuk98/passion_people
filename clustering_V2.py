@@ -55,7 +55,7 @@ data=pd.DataFrame(data=tag_list, columns=col)
 
 
 # 각 컬럼에 있던 태그들을 하나의 컬럼에 리스트로 저장
-data['total_tags']=data.apply(lambda x: [x['tag2'],x['tag3'],x['tag4'],x['tag5'],x['tag6'],x['tag7'],x['tag8'],x['tag9']],axis=1)
+data['total_tags']=data.apply(lambda x: [x['tag1'],x['tag2'],x['tag3'],x['tag4'],x['tag5'],x['tag6'],x['tag7'],x['tag8'],x['tag9']],axis=1)
 
 #  None값 없애서 새로운 리스트에 저장
 tmp_sentence = data['total_tags'].tolist()
