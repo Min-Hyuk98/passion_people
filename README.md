@@ -1,6 +1,5 @@
 # passion_people
 
-1. musinsa_data.py
-2. clustering_V2.py
-3. weather_clustering.py
-4. miracle.py
+날씨와 최신 패션트렌드를 기반으로 한 옷 추천 프로그램
+
+codes 폴더 안의 unused파일을 제외한 파일들 실행
