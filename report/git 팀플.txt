@@ -1,0 +1,63 @@
+0. settings/collaborators 에서 각자 이메일을 추가한다
+
+1. 자신의 local저장소에 git용 폴더를 만든다
+
+2. git bash에 들어가서 그 위치로 이동한다. (cd 이용)
+
+3. git clone https://github.com/Min-Hyuk98/passion_people.git 을 입력한다
+
+   그러면 아까 만든 폴더 안에 git repository에 있던 프로젝트 폴더가 생긴다
+
+4. 프로젝트 폴더 내에서 작업을 한다. (파일을 이 폴더에 저장한다)
+
+5. git bash의 해당 위치에서 git add 파일이름   을 입력한다
+
+   한번에 여러개를 add 하고 싶으면 git add .   을 입력한다
+
+6. git commit -m"my commit message"를 입력한다
+
+7. git push -u origin master를 입력한다(최초 push일때만 이렇게 입력)
+
+   두번째 push부터는 git push만 입력한다
+
+8. 이메일, 이름을 입력하라고 하면 입력한다
+
+   git config --global user.name "사용자이름"
+
+   git config --global user.email 메일주소
+
+9. github.com에 들어가서 제대로 올라왔는지 확인한다.
+
+
+
+기본적인 명령어!!!!
+
+- git status : 파일의 상태를 확인할때 사용하는 명령어.
+	       새로운 파일이 있는지, commit할 준비가 됐는지, push할 준비가 됐는지 알려줌
+
+- git add : 내 폴더(workspace)에 있는 파일을 staged상태로 만들어 commit할 준비를 한다
+
+- git commit -m"message": staged상태에 있는 파일들을 local repository에 올린다. -m"message"는 커밋 메시지로, 그 커밋에 대한 정보를 내 마음대로 적는다
+
+- git commit -a -m"message": git add와 git commit -m""을 합친 기능
+
+- git push : local repository에 있는 파일들을 공동 git repository에 올린다. push를 완료하면 다른 팀원이 내가 수정한 파일을 자신의 workspace에 clone해 사용할 수 있다
+
+- cd 폴더경로+이름: 리눅스 명령어. 해당 폴더로 현재 위치를 이동한다
+
+- ls: 현재 폴더내의 파일들을 보여준다
+
+- pwd: 현재 디렉토리 경로를 보여준다
+
+- mkdir foldername: foldername이라는 이름의 폴더를 현재 위치에 만든다
+
+- rm filename: filename이라는 이름의 파일을 삭제한다
+
+- rm -r foldername: foldername이라는 이름의 폴더 전체를 삭제한다
+
+- cp file1 file2: file1이라는 파일을 file2라는 이름으로 복사한다
+
+
+
+
+
